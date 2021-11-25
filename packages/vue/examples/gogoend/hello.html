@@ -22,65 +22,47 @@
   </div>
 
   <script>
-    const { createApp, ref, watchEffect, defineComponent, h } = Vue
+    const { createApp, ref, watchEffect, defineComponent, h, computed, watch, onMounted, toRefs, reactive } = Vue
     const nana = defineComponent({
-      render () {
-        return h('div', {
-        }, [
-          h('span', { style: { color: 'red' }}, this.nanaMsg),
-          h('br'),
-          h('span', { style: { color: 'blue' }}, this.nanaMsgWithNumber)
-        ])
-      },
-      data () {
-        return {
+      setup() {
+        const state = toRefs(reactive({
           nanaMsg: 'nana'
-        }
-      },
-      computed: {
-        nanaMsgWithNumber () {
-          return this.nanaMsg + '100'
-        }
-      },
-      watch: {
-        nanaMsg: {
-          immediate: true,
-          handler (val) {
-            console.log(val)
-          }
-        }
-      },
-      mounted () {
-        setTimeout(() => {
-          this.nanaMsg = 'nanaco'
-        }, 4000)
+        }))
+        const nanaMsgWithNumber = computed(() => state.nanaMsg.value + '100')
+        watch(() => state.nanaMsg, (val) => {
+          console.log(val)
+        }, {
+          immediate: true
+        })
+
+        onMounted(() => {
+          setTimeout(() => {
+            state.nanaMsg.value = 'nanaco'
+          }, 4000)
+        })
+        return () => h(
+          'div',
+          {},
+          [
+            h('span', { style: { color: 'red' } }, state.nanaMsg.value),
+            h('br'),
+            h('span', { style: { color: 'blue' } }, nanaMsgWithNumber.value)
+          ]
+        )
       }
     })
     console.log(nana)
 
     createApp({
       components: {
-        // nana
+        nana
       },
-      data () {
-        return {
-          message: 'hello world'
-        }
-      },
-      render () {
-        return h('div', { attrs: { id: 'app' }}, this.message)
+      setup() {
+        const message = ref('hello world')
+        return () => h('div', { attrs: { id: 'app' } }, [message.value, h(nana)])
       }
-      // render (createElement) {
-      //   return createElement('div', { attrs: { id: 'app' }}, [
-      //     createElement('nana', {
-      //       attrs: {
-      //         id: 'app-nana'
-      //       }
-      //     }), this.message
-      //   ])
-      // }
     }).mount('#app')
   </script>
-</body>
+  </body>
 
 </html>
