@@ -59,6 +59,7 @@ export const extend = Object.assign
 export const remove = <T>(arr: T[], el: T) => {
   const i = arr.indexOf(el)
   if (i > -1) {
+    // splice其实比较耗费性能，删了数组中某项，其它关联项索引都会变
     arr.splice(i, 1)
   }
 }
@@ -140,7 +141,11 @@ export const isReservedProp = /*#__PURE__*/ makeMap(
     'onVnodeBeforeUpdate,onVnodeUpdated,' +
     'onVnodeBeforeUnmount,onVnodeUnmounted'
 )
-
+/**
+ * 缓存函数 类似单例模式，若已创建则直接返回，若未创建则创建后返回
+ * @param fn
+ * @returns
+ */
 const cacheStringFunction = <T extends (str: string) => string>(fn: T): T => {
   const cache: Record<string, string> = Object.create(null)
   return ((str: string) => {
@@ -193,6 +198,15 @@ export const toHandlerKey = cacheStringFunction((str: string) =>
 export const hasChanged = (value: any, oldValue: any): boolean =>
   !Object.is(value, oldValue)
 
+// `Object.is` 与 `===`行为几乎一致，除了两个例外
+// Object.is = (x, y) => {
+//   if (x === y) {
+//     // 例外1：+0 !== -0
+//     return x !== 0 || 1 / x === 1 / y;
+//   }
+//   // 例外2：NaN === NaN
+//   return x !== x && y !== y;
+// }
 /**
  * 触发数组内所有函数
  * @param fns

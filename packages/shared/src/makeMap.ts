@@ -5,6 +5,12 @@
  * \/\*#\_\_PURE\_\_\*\/
  * So that rollup can tree-shake them if necessary.
  */
+/**
+ * 给定一个字符串，“a,b,c,d,e,f,g”，使用逗号分隔，以这些字符串作为key，产生一个对象
+ * @param str
+ * @param expectsLowerCase
+ * @returns
+ */
 export function makeMap(
   str: string,
   expectsLowerCase?: boolean
