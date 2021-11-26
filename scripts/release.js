@@ -7,18 +7,23 @@ const currentVersion = require('../package.json').version
 const { prompt } = require('enquirer')
 const execa = require('execa')
 
+// 拿到要发布的版本号
 const preId =
   args.preid ||
   (semver.prerelease(currentVersion) && semver.prerelease(currentVersion)[0])
 const isDryRun = args.dry
 const skipTests = args.skipTests
 const skipBuild = args.skipBuild
+
+// 获得所有包名 - package目录下所有文件夹的名称
 const packages = fs
   .readdirSync(path.resolve(__dirname, '../packages'))
   .filter(p => !p.endsWith('.ts') && !p.startsWith('.'))
 
+// 常量维护一个要跳过的包
 const skippedPackages = []
 
+// 版本增量？
 const versionIncrements = [
   'patch',
   'minor',
@@ -26,14 +31,20 @@ const versionIncrements = [
   ...(preId ? ['prepatch', 'preminor', 'premajor', 'prerelease'] : [])
 ]
 
+// 通过semver创建一个版本
 const inc = i => semver.inc(currentVersion, i, preId)
+// 通过文件名拿到一个可执行文件的路径
 const bin = name => path.resolve(__dirname, '../node_modules/.bin/' + name)
+// 执行脚本封装函数
 const run = (bin, args, opts = {}) =>
   execa(bin, args, { stdio: 'inherit', ...opts })
+// 假运行，查看命令执行结果
 const dryRun = (bin, args, opts = {}) =>
   console.log(chalk.blue(`[dryrun] ${bin} ${args.join(' ')}`), opts)
 const runIfNotDry = isDryRun ? dryRun : run
+// 获得包的根路径
 const getPkgRoot = pkg => path.resolve(__dirname, '../packages/' + pkg)
+// 每步打印一个带颜色的日志
 const step = msg => console.log(chalk.cyan(msg))
 
 async function main() {
@@ -41,6 +52,7 @@ async function main() {
 
   if (!targetVersion) {
     // no explicit version, offer suggestions
+    // 没有显示指定版本，就提出一些建议，供用户确认
     const { release } = await prompt({
       type: 'select',
       name: 'release',
@@ -61,11 +73,12 @@ async function main() {
       targetVersion = release.match(/\((.*)\)/)[1]
     }
   }
-
+  // 版本无效
   if (!semver.valid(targetVersion)) {
     throw new Error(`invalid target version: ${targetVersion}`)
   }
 
+  // 确认是否要继续接下来的发布流程
   const { yes } = await prompt({
     type: 'confirm',
     name: 'yes',
@@ -77,6 +90,7 @@ async function main() {
   }
 
   // run tests before release
+  // 发布前执行测试
   step('\nRunning tests...')
   if (!skipTests && !isDryRun) {
     await run(bin('jest'), ['--clearCache'])
@@ -86,6 +100,7 @@ async function main() {
   }
 
   // update all package versions and inter-dependencies
+  // 更新所有包版本及交叉依赖
   step('\nUpdating cross dependencies...')
   updateVersions(targetVersion)
 
@@ -101,6 +116,7 @@ async function main() {
   }
 
   // generate changelog
+  // 创建changelog
   step('\nGenerating changelog...')
   await run(`pnpm`, ['run', 'changelog'])
 
@@ -108,6 +124,7 @@ async function main() {
   step('\nUpdating lockfile...')
   await run(`pnpm`, ['install', '--prefer-offline'])
 
+  // 执行一次git提交
   const { stdout } = await run('git', ['diff'], { stdio: 'pipe' })
   if (stdout) {
     step('\nCommitting changes...')
@@ -118,6 +135,7 @@ async function main() {
   }
 
   // publish packages
+  // 发布到npm
   step('\nPublishing packages...')
   for (const pkg of packages) {
     await publishPackage(pkg, targetVersion, runIfNotDry)
