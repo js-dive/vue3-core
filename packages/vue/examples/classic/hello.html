@@ -1,0 +1,76 @@
+
+<script src="../../dist/vue.global.js"></script>
+
+<div id="app">
+</div>
+
+<script>
+  const { h , defineComponent} = Vue
+
+  const Nana = defineComponent({
+    render () {
+      return h('div', {
+      }, [
+        h('span', { style: { color: 'red' }}, this.nanaMsg),
+        h('br'),
+        h('span', { style: { color: 'blue' }}, this.nanaMsgWithNumber)
+      ])
+    },
+    data () {
+      return {
+        nanaMsg: 'nana'
+      }
+    },
+    computed: {
+      nanaMsgWithNumber () {
+        return this.nanaMsg + '100'
+      }
+    },
+    watch: {
+      nanaMsg: {
+        immediate: true,
+        handler (val) {
+          console.log(val)
+        }
+      }
+    },
+    created () {
+      console.log('nana created')
+    },
+    mounted () {
+      setTimeout(() => {
+        this.nanaMsg = 'nanaco'
+      }, 4000)
+    }
+  })
+  console.log(Nana)
+
+
+  Vue.createApp({
+    components: {
+      Nana
+    },
+    data () {
+      return {
+        message: 'hello world'
+      }
+    },
+    // render () {
+    //   return h('div', { attrs: { id: 'app' }}, this.message)
+    // }
+    created() {
+      debugger
+    },
+    render () {
+      return h('div', { attrs: { id: 'app' }}, [
+        '111',
+        h('nana', {
+          attrs: {
+            id: 'app-nana'
+          }
+        }), this.message
+      ])
+    }
+  })
+  .mount('#app' )
+</script>
