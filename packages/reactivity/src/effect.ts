@@ -229,10 +229,18 @@ export function track(target: object, type: TrackOpTypes, key: unknown) {
   }
 }
 
+/**
+ * 收集依赖
+ * @param dep 依赖集合
+ * @param debuggerEventExtraInfo
+ */
 export function trackEffects(
   dep: Dep,
   debuggerEventExtraInfo?: DebuggerEventExtraInfo
 ) {
+  /**
+   * 是否应该收集依赖标识
+   */
   let shouldTrack = false
   if (effectTrackDepth <= maxMarkerBits) {
     if (!newTracked(dep)) {
@@ -245,6 +253,7 @@ export function trackEffects(
   }
 
   if (shouldTrack) {
+    // TODO: 建立dep <-> activeEffect 双边的关系
     dep.add(activeEffect!)
     activeEffect!.deps.push(dep)
     if (__DEV__ && activeEffect!.onTrack) {

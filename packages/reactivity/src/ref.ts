@@ -32,10 +32,20 @@ export interface Ref<T = any> {
 }
 
 type RefBase<T> = {
+  /**
+   * 依赖集合
+   */
   dep?: Dep
+  /**
+   * 原始值
+   */
   value: T
 }
 
+/**
+ * 追踪收集ref的依赖？
+ * @param ref
+ */
 export function trackRefValue(ref: RefBase<any>) {
   if (shouldTrack && activeEffect) {
     ref = toRaw(ref)
@@ -46,6 +56,7 @@ export function trackRefValue(ref: RefBase<any>) {
         key: 'value'
       })
     } else {
+      // 收集依赖
       trackEffects(ref.dep || (ref.dep = createDep()))
     }
   }
@@ -113,8 +124,13 @@ class RefImpl<T> {
     this._value = __v_isShallow ? value : toReactive(value)
   }
 
+  /**
+   * 取值逻辑
+   */
   get value() {
+    // 读取值的时候，首先收集依赖
     trackRefValue(this)
+    // 然后返回值
     return this._value
   }
 

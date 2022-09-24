@@ -18,6 +18,11 @@ type TrackedMarkers = {
   n: number
 }
 
+/**
+ * 创建依赖集合
+ * @param effects
+ * @returns
+ */
 export const createDep = (effects?: ReactiveEffect[]): Dep => {
   const dep = new Set<ReactiveEffect>(effects) as Dep
   dep.w = 0
@@ -25,8 +30,18 @@ export const createDep = (effects?: ReactiveEffect[]): Dep => {
   return dep
 }
 
+/**
+ * 检查依赖是不是被收集过
+ * @param dep
+ * @returns
+ */
 export const wasTracked = (dep: Dep): boolean => (dep.w & trackOpBit) > 0
 
+/**
+ * 检查依赖是不是新创建的
+ * @param dep
+ * @returns
+ */
 export const newTracked = (dep: Dep): boolean => (dep.n & trackOpBit) > 0
 
 export const initDepMarkers = ({ deps }: ReactiveEffect) => {
