@@ -2,60 +2,22 @@
 <script src="../../dist/vue.global.js"></script>
 
 <div id="app">
+  <div>
+    111 {{ message.value }}
+  </div>
 </div>
 
 <script>
   const { h , defineComponent, computed, ref, watch, onMounted} = Vue
 
-  const Nana = defineComponent({
-    setup () {
-      const nanaMsg = ref('nana')
-      const nanaMsgWithNumber = computed(() => {
-        debugger
-        return nanaMsg.value + '100'
-      })
-      watch(
-        nanaMsg,
-        (val) => {
-          console.log(val)
-        }, {
-          immediate: true
-        }
-      )
-      console.log('nana created')
-      onMounted(() => {
-        setTimeout(() => {
-          nanaMsg.value = 'nanaco'
-        }, 4000)
-      })
-      return () => h(
-        'div',
-        {},
-        [
-          h('span', { style: { color: 'red' }}, nanaMsg.value),
-          h('br'),
-          h('span', { style: { color: 'blue' }}, nanaMsgWithNumber.value)
-        ]
-      )
-    },
-  })
-  console.log(Nana)
-
-
   Vue.createApp({
     components: {
-      Nana
     },
     setup () {
       const message = ref('hello world')
-      return () => h('div', { attrs: { id: 'app' }}, [
-        '111',
-        h(Nana, {
-          attrs: {
-            id: 'app-nana'
-          }
-        }), message.value
-      ])
+      return {
+        message
+      }
     }
   })
   .mount('#app' )
