@@ -1,0 +1,63 @@
+<script src="../../dist/vue.global.js"></script>
+
+<div id="app">
+</div>
+
+<script>
+  const { h, defineComponent, computed, ref, watch, onMounted, onUpdated } = Vue
+
+  Vue.createApp({
+    components: {
+    },
+    setup() {
+      const vnode = ref({
+        tag: 'div',
+        children: [
+          { tag: 'h1', children: ['a'], key: 0 },
+          { tag: 'input', children: null, key: -1 },
+          { tag: 'h3', children: ['b'], key: undefined },
+          { tag: 'div', children: ['c'], key: 3 },
+          { tag: 'h5', children: ['d'], key: undefined },
+          { tag: 'div', children: ['e'], key: 1 },
+        ]
+      })
+
+      setTimeout(() => {
+        vnode.value = {
+          tag: 'div',
+          children: [
+            { tag: 'div', children: ['1'], key: undefined },
+            { tag: 'article', children: ['2'], key: undefined },
+            { tag: 'div', children: ['3'], key: undefined },
+            { tag: 'div', children: ['4'], key: 1 },
+            { tag: 'input', children: null, key: 2 },
+            { tag: 'button', children: ['5'], key: undefined },
+            { tag: 'h1', children: ['6'], key: 0 },
+            { tag: 'div', children: ['7'], key: 3 },
+          ]
+        }
+      }, 2000)
+
+      onUpdated(() => {
+        console.log('视图更新')
+      })
+
+      return () => {
+        return h(
+          vnode.value.tag,
+          {},
+          vnode.value.children.map(
+            it => h(
+              it.tag,
+              {
+                key: it.key
+              },
+              [...(it.children ?? [])]
+            )
+          )
+        )
+      }
+    }
+  })
+    .mount('#app')
+</script>
