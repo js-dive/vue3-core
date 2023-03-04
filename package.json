@@ -97,5 +97,8 @@
     "vite": "^3.0.0",
     "vue": "workspace:*",
     "yorkie": "^2.0.0"
+  },
+  "volta": {
+    "node": "16.19.1"
   }
 }
