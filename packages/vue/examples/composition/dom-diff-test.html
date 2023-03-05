@@ -13,12 +13,13 @@
       const vnode = ref({
         tag: 'div',
         children: [
-          { tag: 'h1', children: ['a'], key: 0 },
-          { tag: 'input', children: null, key: -1 },
-          { tag: 'h3', children: ['b'], key: undefined },
-          { tag: 'div', children: ['c'], key: 3 },
-          { tag: 'h5', children: ['d'], key: undefined },
-          { tag: 'div', children: ['e'], key: 1 },
+          { tag: 'div', children: ['a'], key: 0 },
+          { tag: 'div', children: ['b'], key: 1 },
+          { tag: 'div', children: ['c'], key: 2 },
+          { tag: 'div', children: ['d'], key: 3 },
+          { tag: 'div', children: ['e'], key: 4 },
+          { tag: 'div', children: ['f'], key: 5 },
+          { tag: 'div', children: ['g'], key: 6 }
         ]
       })
 
@@ -26,14 +27,15 @@
         vnode.value = {
           tag: 'div',
           children: [
-            { tag: 'div', children: ['1'], key: undefined },
-            { tag: 'article', children: ['2'], key: undefined },
-            { tag: 'div', children: ['3'], key: undefined },
-            { tag: 'div', children: ['4'], key: 1 },
-            { tag: 'input', children: null, key: 2 },
-            { tag: 'button', children: ['5'], key: undefined },
-            { tag: 'h1', children: ['6'], key: 0 },
-            { tag: 'div', children: ['7'], key: 3 },
+            { tag: 'div', children: ['a'], key: 0 },
+            { tag: 'div', children: ['b'], key: 1 },
+            { tag: 'div', children: ['e'], key: 4 },
+            { tag: 'div', children: ['d'], key: 3 },
+            { tag: 'div', children: ['h'], key: 7 },
+            { tag: 'div', children: ['i'], key: 8 },
+            { tag: 'div', children: ['c'], key: 2 },
+            { tag: 'div', children: ['f'], key: 5 },
+            { tag: 'div', children: ['g'], key: 6 }
           ]
         }
       }, 2000)
